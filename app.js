@@ -134,5 +134,36 @@
     el("status").textContent = changes + (changes === 1 ? " keyset changed" : " keysets changed") + " across " + diff.length + " compared.";
   }
   el("compare").addEventListener("click", compare);
+  const keysetInput = el("keyset-data");
+  const keysetResult = el("keyset-result");
+  let currentCheck = 0;
+  function clearCheck() {
+    currentCheck++;
+    keysetInput.removeAttribute("aria-invalid");
+    keysetResult.replaceChildren();
+  }
+  keysetInput.addEventListener("input", clearCheck);
+  el("reset-keyset").addEventListener("click", () => {
+    keysetInput.value = keysetInput.defaultValue;
+    clearCheck();
+    keysetResult.textContent = "Example restored.";
+  });
+  el("keyset-check").addEventListener("click", async () => {
+    clearCheck();
+    const requested = currentCheck;
+    try {
+      const result = await checkCashuKeyset(JSON.parse(keysetInput.value));
+      if (requested !== currentCheck) return;
+      const id = document.createElement("code");
+      id.textContent = result.derived;
+      const lead = result.matches ? "IDs match." : "IDs differ.";
+      keysetResult.append(lead + " Calculated V" + result.version + " ID from " +
+        result.count + (result.count === 1 ? " key is " : " keys is "), id);
+    } catch (error) {
+      if (requested !== currentCheck) return;
+      keysetInput.setAttribute("aria-invalid", "true");
+      keysetResult.textContent = error instanceof SyntaxError ? "Paste valid JSON for one public keyset." : error.message;
+    }
+  });
   compare();
 })();

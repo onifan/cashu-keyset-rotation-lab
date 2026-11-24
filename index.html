@@ -65,6 +65,31 @@
         <p>A rate of 100 ppk means 100 fee units per 1,000 input proofs. For example, two proofs at 100 ppk and one at 500 ppk add up to 700 ppk. Divide by 1,000 and round up once for the whole swap. In sat-denominated ecash, the result is <strong>1 sat</strong>.</p>
       </details>
     </section>
+    <section class="results" aria-labelledby="verify-title">
+      <h2 id="verify-title">Verify a public keyset ID</h2>
+      <p class="section-help" id="verify-help">Try the official NUT-02 example, or combine one keyset’s public keys from <code>GET /v1/keys/{id}</code> with its unit, fee and expiry from <code>GET /v1/keysets</code>. V2 includes that metadata in the ID. Change the fee in this example to see the result.</p>
+      <div class="editor">
+        <label for="keyset-data">Public keyset JSON</label>
+        <textarea id="keyset-data" rows="9" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="verify-help">{
+  "id": "015ba18a8adcd02e715a58358eb618da4a4b3791151a4bee5e968bb88406ccf76a",
+  "unit": "sat",
+  "input_fee_ppk": 100,
+  "final_expiry": 2059210353,
+  "keys": {
+    "1": "03a40f20667ed53513075dc51e715ff2046cad64eb68960632269ba7f0210e38bc",
+    "2": "03fd4ce5a16b65576145949e6f99f445f8249fee17c606b688b504a849cdc452de",
+    "4": "02648eccfa4c026960966276fa5a4cae46ce0fd432211a4f449bf84f13aa5f8303",
+    "8": "02fdfd6796bfeac490cbee12f778f867f0a2c68f6508d17c649759ea0dc3547528"
+  }
+}</textarea>
+      </div>
+      <div class="run-line">
+        <button type="button" id="keyset-check">Calculate and compare</button>
+        <button type="button" id="reset-keyset">Reset example</button>
+      </div>
+      <p id="keyset-result" role="status" aria-live="polite" aria-atomic="true"></p>
+      <a href="https://github.com/cashubtc/nuts/blob/8f83a974503643d47fef12614039dca0e17e8ab1/tests/02-tests.md">Official test vectors</a>
+    </section>
   </main>
   <footer class="wrap footer">
     <span>Cashu protocol references</span>
@@ -72,6 +97,7 @@
     <a href="https://github.com/cashubtc/nuts/blob/main/03.md">NUT-03 · Swapping tokens</a>
   </footer>
   <script src="rotation.js"></script>
+  <script src="keyset-id.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

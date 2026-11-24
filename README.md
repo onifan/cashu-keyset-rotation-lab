@@ -14,11 +14,17 @@ An offline lesson for wallet developers and Cashu learners. Compare two public k
 - **Active** describes whether the mint accepts new outputs for a keyset when it accepts the request. A keyset can stop accepting new outputs while old proofs can still serve as inputs. After a keyset's final expiry the mint is no longer obliged to redeem its proofs. An already accepted request keeps its original output keyset.
 - **No longer listed** records an observation in a later snapshot. Neither snapshot contains the spending state of a particular proof. The fee calculator offers the keysets listed in the later snapshot and models counts supplied by the reader.
 - The fee is the ceiling of the sum of each input proof's rate divided by 1,000. Missing or null fee rates count as zero. Each estimate uses a single unit. USD and EUR amounts are denominated in cents. Estimates cover the Cashu input fee only.
-- Keysets are matched by exact unit and ID. The lab also handles multiple active keysets, an empty list and unknown currency units. It does not contact a mint, check its reserves, authenticate keyset IDs from public keys or execute a swap.
+- Keysets are matched by exact unit and ID. The lab also handles multiple active keysets, an empty list and unknown currency units. The comparison reads public metadata. The checker below derives IDs from a supplied set of public keys.
+
+## Verify an ID from public keys
+
+Select **Calculate and compare** on the prefilled official example. Its four public keys, unit, fee of 100 ppk and final expiry reproduce the 33-byte V2 ID. Change the fee to 101 and calculate again to see the new ID. **Reset example** restores the published vector.
+
+To check a real keyset, paste the public row from the mint’s `GET /v1/keys/{id}` response. For V2, copy the matching `unit`, `input_fee_ppk` and `final_expiry` metadata from `GET /v1/keysets`. The V1 algorithm uses just the public keys in denomination order. A match confirms how those inputs hash to the announced ID. Everything runs in your browser using Web Crypto SHA-256. The page also works offline as a local file in a browser that supports Web Crypto on file URLs.
 
 ## Verify the arithmetic
 
-Run `node test.cjs` in this directory. The tests cover fees around rounding boundaries, mixed rates, separate units, earlier and later snapshot membership, malformed input and integer overflow. The browser and Node use the same calculation.
+Run `node test.cjs` in this directory. The tests cover fees around rounding boundaries, mixed rates, separate units, earlier and later snapshot membership, malformed input and integer overflow. The browser and Node use the same calculation. On Node 22 or later, run `node tests/keyset-id.cjs` to check both generations of keyset IDs against all five published NUT-02 vectors, including 64-denomination sets. The vendored vectors record their pinned upstream source.
 
 Protocol sources: [NUT-01 currency units](https://github.com/cashubtc/nuts/blob/main/01.md), [NUT-02 keysets and fees](https://github.com/cashubtc/nuts/blob/8f83a974503643d47fef12614039dca0e17e8ab1/02.md) and [NUT-03 swaps](https://github.com/cashubtc/nuts/blob/main/03.md).
 
